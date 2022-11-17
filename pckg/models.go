@@ -1,4 +1,6 @@
-// Account represents an account in the form3 org section.
+package models
+
+// AccountData represents an account in the form3 org section.
 // See https://api-docs.form3.tech/api.html#organisation-accounts for
 // more information about fields.
 type AccountData struct {
