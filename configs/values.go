@@ -1,24 +1,23 @@
 package configs
 
 import (
-	"fmt"
+	"f3.com/accounts/internal"
 	"os"
 )
 
 const (
-	defaultHost              = "http://localhost:8080"
-	organisationsAccountsUri = "/v1/organisation/accounts"
+	defaultHostAddress            = "http://localhost:8080"
+	organisationsAccountsResource = "v1/organisation/accounts"
+	ApplicationJson               = "application/json"
 )
 
-var OrganizationsAccountAddress = resolveAddress(defaultHost, organisationsAccountsUri)
-
-func resolveAddress(host string, uri string) string {
-	return fmt.Sprintf("%s%s", host, uri)
-}
+var OrganizationsAccountAddress = internal.ResolveAddress(defaultHostAddress,
+	organisationsAccountsResource)
 
 func init() {
-	h := os.Getenv("F3_HOST")
+	h := os.Getenv("HOST_ADDR")
 	if len(h) > 0 {
-		OrganizationsAccountAddress = resolveAddress(h, organisationsAccountsUri)
+		OrganizationsAccountAddress = internal.ResolveAddress(h,
+			organisationsAccountsResource)
 	}
 }
