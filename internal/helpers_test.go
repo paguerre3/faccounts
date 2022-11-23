@@ -1,25 +1,21 @@
 package internal
 
 import (
+	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
 func Test_WhenResolveAddressHavingValidAttributes_ThenResultIsUrl(t *testing.T) {
 	t.Parallel()
+	assert := assert.New(t)
 	a := ResolveAddress("http://localhost:8080", "v1/organisation/accounts")
-	if a != "http://localhost:8080/v1/organisation/accounts" {
-		t.Fail()
-	}
+	assert.Equal("http://localhost:8080/v1/organisation/accounts", a)
 	a = ResolveAddress("http://localhost:8080/v1/organisation/accounts", "007")
-	if a != "http://localhost:8080/v1/organisation/accounts/007" {
-		t.Fail()
-	}
+	assert.Equal("http://localhost:8080/v1/organisation/accounts/007", a)
 }
 
 func Test_WhenResolveAddressHavingInvalidAttributes_ThenResultIsIncorrect(t *testing.T) {
 	t.Parallel()
 	a := ResolveAddress("", "")
-	if a != "/" {
-		t.Fail()
-	}
+	assert.Equal(t, "/", a)
 }

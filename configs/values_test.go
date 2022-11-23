@@ -1,6 +1,7 @@
 package configs
 
 import (
+	"github.com/stretchr/testify/assert"
 	"os"
 	"testing"
 )
@@ -12,9 +13,5 @@ func Test_WhenInitConfigs_ThenOrganizationsAccountAddressIsSet(t *testing.T) {
 	if len(ea) == 0 {
 		ea = "http://localhost:8080/v1/organisation/accounts"
 	}
-	if OrganizationsAccountAddress != ea {
-		// fail is included inside error:
-		t.Errorf("unexpected account address %s", OrganizationsAccountAddress)
-		t.Fail()
-	}
+	assert.Equal(t, OrganizationsAccountAddress, ea)
 }
