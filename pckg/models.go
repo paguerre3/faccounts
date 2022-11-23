@@ -1,5 +1,28 @@
 package pckg
 
+// Request generic template for building a "single" request:
+type Request[T any] struct {
+	Data T `json:"data"`
+}
+
+// Response generic template for building a single response:
+type Response[T any] struct {
+	Data   T `json:"data"`
+	*Links `json:"links,omitempty"`
+}
+
+// ResponseComposition generic template for building a multiple responses normally paginated:
+type ResponseComposition[T any] struct {
+	Data   []T `json:"data"`
+	*Links `json:"links,omitempty"`
+}
+
+type Links struct {
+	Self  string  `json:"self"`
+	First *string `json:"first,omitempty"`
+	Last  *string `json:"last,omitempty"`
+}
+
 // AccountData represents an account in the form3 org section.
 // See https://api-docs.form3.tech/api.html#organisation-accounts for
 // more information about fields.
