@@ -1,34 +1,34 @@
 package pkg
 
-// Request generic template for building a "single" request:
-type Request[T any] struct {
+// request generic template for building a "single" request:
+type request[T any] struct {
 	Data T `json:"data"`
 }
 
-// Response generic template for building a single response:
-type Response[T any] struct {
-	Data   T `json:"data"`
-	*Links `json:"links,omitempty"`
+// response generic template for building a single response:
+type response[T any] struct {
+	Data  T      `json:"data"`
+	Links *links `json:"links,omitempty"`
 }
 
-// ResponseComposition generic template for building a multiple responses normally paginated:
-type ResponseComposition[T any] struct {
-	Data   []T `json:"data"`
-	*Links `json:"links,omitempty"`
+// responseComposition generic template for building a multiple responses normally paginated:
+type responseComposition[T any] struct {
+	Data  []T    `json:"data"`
+	Links *links `json:"links,omitempty"`
 }
 
-type Links struct {
+type links struct {
 	Self  string  `json:"self"`
 	First *string `json:"first,omitempty"`
 	Last  *string `json:"last,omitempty"`
 }
 
-// Link enum used by fetch all retrieval:
-type Link string
+// link enum used by fetch all retrieval:
+type link string
 
 const (
-	First Link = "first"
-	Last  Link = "last"
+	First link = "first"
+	Last  link = "last"
 )
 
 // AccountData represents an account in the form3 org section.

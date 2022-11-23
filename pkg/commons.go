@@ -16,7 +16,7 @@ func mockBasicAccountData(id string, name string) (ad *AccountData, e error) {
 	if e != nil {
 		return nil, e
 	}
-	r := Request[AccountData]{}
+	r := request[AccountData]{}
 	if e = json.Unmarshal(bs, &r); e != nil {
 		return nil, e
 	}

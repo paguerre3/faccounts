@@ -16,7 +16,7 @@ func NewAccountHandler() AccountHandler {
 }
 
 func (accountHandlerImpl) Create(req AccountData) (resp *AccountData, err error) {
-	r := Request[AccountData]{
+	r := request[AccountData]{
 		Data: req,
 	}
 	bs, err := json.Marshal(r)
@@ -35,7 +35,7 @@ func (accountHandlerImpl) Fetch(id string) (*AccountData, error) {
 	return processSingleResponse(httpResp, err, http.StatusOK)
 }
 
-func (accountHandlerImpl) FetchAll(pageNumber *uint, link *Link) ([]AccountData, error) {
+func (accountHandlerImpl) FetchAll(pageNumber *uint, link *link) ([]AccountData, error) {
 	return nil, nil
 }
 
@@ -53,13 +53,13 @@ func processSingleResponse(httpResp *http.Response, httpErr error, expectedStatu
 		err = httpErr
 	}
 	if err == nil && httpResp.StatusCode != expectedStatus {
-		err = fmt.Errorf("invalid status %b expected %b",
+		err = fmt.Errorf("invalid status %v expected %v",
 			httpResp.StatusCode, expectedStatus)
 	}
 	if err != nil {
 		return nil, err
 	}
-	r := Response[AccountData]{}
+	r := response[AccountData]{}
 	if err = json.NewDecoder(httpResp.Body).Decode(&r); err != nil {
 		return nil, err
 	}
