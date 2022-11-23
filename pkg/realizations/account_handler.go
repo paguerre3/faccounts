@@ -5,19 +5,18 @@ import (
 	"encoding/json"
 	"f3.com/accounts/configs"
 	"f3.com/accounts/internal"
-	"f3.com/accounts/pckg"
+	"f3.com/accounts/pkg"
 	"fmt"
 	"net/http"
 )
 
 type accountHandlerImpl struct{}
 
-func NewAccountHandler() pckg.AccountHandler {
+func NewAccountHandler() pkg.AccountHandler {
 	return accountHandlerImpl{}
 }
 
-func (accountHandlerImpl) Create(req pckg.Request[pckg.AccountAttributes]) (
-	resp *pckg.Response[pckg.AccountData], err error) {
+func (accountHandlerImpl) Create(req pkg.AccountData) (resp *pkg.AccountData, err error) {
 	bs, err := json.Marshal(req)
 	if err != nil {
 		return nil, err
@@ -28,13 +27,13 @@ func (accountHandlerImpl) Create(req pckg.Request[pckg.AccountAttributes]) (
 	return processSingleResponse(httpResp, err, http.StatusCreated)
 }
 
-func (accountHandlerImpl) Fetch(id string) (resp *pckg.Response[pckg.AccountData], err error) {
+func (accountHandlerImpl) Fetch(id string) (*pkg.AccountData, error) {
 	address := internal.ResolveAddress(configs.OrganizationsAccountAddress, id)
 	httpResp, err := http.Get(address)
 	return processSingleResponse(httpResp, err, http.StatusOK)
 }
 
-func (accountHandlerImpl) FetchAll(pageNumber *uint) (*pckg.ResponseComposition[pckg.AccountData], error) {
+func (accountHandlerImpl) FetchAll(pageNumber *uint, link *pkg.Link) ([]pkg.AccountData, error) {
 	return nil, nil
 }
 
@@ -43,7 +42,7 @@ func (accountHandlerImpl) Delete(id string) error {
 }
 
 func processSingleResponse(httpResp *http.Response, httpErr error, expectedStatus int) (
-	resp *pckg.Response[pckg.AccountData], err error) {
+	resp *pkg.AccountData, err error) {
 	if httpResp != nil && httpResp.Body != nil {
 		// 1st of all ensure to close body if applicable:
 		defer httpResp.Body.Close()

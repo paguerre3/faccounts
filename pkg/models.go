@@ -1,4 +1,4 @@
-package pckg
+package pkg
 
 // Request generic template for building a "single" request:
 type Request[T any] struct {
@@ -22,6 +22,14 @@ type Links struct {
 	First *string `json:"first,omitempty"`
 	Last  *string `json:"last,omitempty"`
 }
+
+// Link enum used by fetch all retrieval:
+type Link string
+
+const (
+	First Link = "first"
+	Last  Link = "last"
+)
 
 // AccountData represents an account in the form3 org section.
 // See https://api-docs.form3.tech/api.html#organisation-accounts for
