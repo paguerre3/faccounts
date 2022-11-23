@@ -1,23 +1,25 @@
-package realizations
+package pkg
 
 import (
 	"bytes"
 	"encoding/json"
 	"f3.com/accounts/configs"
 	"f3.com/accounts/internal"
-	"f3.com/accounts/pkg"
 	"fmt"
 	"net/http"
 )
 
 type accountHandlerImpl struct{}
 
-func NewAccountHandler() pkg.AccountHandler {
+func NewAccountHandler() AccountHandler {
 	return accountHandlerImpl{}
 }
 
-func (accountHandlerImpl) Create(req pkg.AccountData) (resp *pkg.AccountData, err error) {
-	bs, err := json.Marshal(req)
+func (accountHandlerImpl) Create(req AccountData) (resp *AccountData, err error) {
+	r := Request[AccountData]{
+		Data: req,
+	}
+	bs, err := json.Marshal(r)
 	if err != nil {
 		return nil, err
 	}
@@ -27,13 +29,13 @@ func (accountHandlerImpl) Create(req pkg.AccountData) (resp *pkg.AccountData, er
 	return processSingleResponse(httpResp, err, http.StatusCreated)
 }
 
-func (accountHandlerImpl) Fetch(id string) (*pkg.AccountData, error) {
+func (accountHandlerImpl) Fetch(id string) (*AccountData, error) {
 	address := internal.ResolveAddress(configs.OrganizationsAccountAddress, id)
 	httpResp, err := http.Get(address)
 	return processSingleResponse(httpResp, err, http.StatusOK)
 }
 
-func (accountHandlerImpl) FetchAll(pageNumber *uint, link *pkg.Link) ([]pkg.AccountData, error) {
+func (accountHandlerImpl) FetchAll(pageNumber *uint, link *Link) ([]AccountData, error) {
 	return nil, nil
 }
 
@@ -42,7 +44,7 @@ func (accountHandlerImpl) Delete(id string) error {
 }
 
 func processSingleResponse(httpResp *http.Response, httpErr error, expectedStatus int) (
-	resp *pkg.AccountData, err error) {
+	resp *AccountData, err error) {
 	if httpResp != nil && httpResp.Body != nil {
 		// 1st of all ensure to close body if applicable:
 		defer httpResp.Body.Close()
@@ -57,8 +59,10 @@ func processSingleResponse(httpResp *http.Response, httpErr error, expectedStatu
 	if err != nil {
 		return nil, err
 	}
-	if err = json.NewDecoder(httpResp.Body).Decode(resp); err != nil {
+	r := Response[AccountData]{}
+	if err = json.NewDecoder(httpResp.Body).Decode(&r); err != nil {
 		return nil, err
 	}
+	resp = &r.Data
 	return resp, err
 }

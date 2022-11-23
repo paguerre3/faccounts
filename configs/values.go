@@ -8,9 +8,7 @@ import (
 const (
 	defaultHostAddress            = "http://localhost:8080"
 	organisationsAccountsResource = "v1/organisation/accounts"
-
-	// ApplicationJson global exposed constant:
-	ApplicationJson = "application/json"
+	ApplicationJson               = "application/json"
 )
 
 // OrganizationsAccountAddress global exposed variable that might by overwritten if applicable:
