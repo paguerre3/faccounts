@@ -11,25 +11,11 @@ type response[T any] struct {
 	Links *links `json:"links,omitempty"`
 }
 
-// responseComposition generic template for building a multiple responses normally paginated:
-type responseComposition[T any] struct {
-	Data  []T    `json:"data"`
-	Links *links `json:"links,omitempty"`
-}
-
 type links struct {
 	Self  string  `json:"self"`
 	First *string `json:"first,omitempty"`
 	Last  *string `json:"last,omitempty"`
 }
-
-// link enum used by fetch all retrieval:
-type link string
-
-const (
-	First link = "first"
-	Last  link = "last"
-)
 
 // AccountData represents an account in the form3 org section.
 // See https://api-docs.form3.tech/api.html#organisation-accounts for

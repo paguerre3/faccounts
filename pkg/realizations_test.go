@@ -91,3 +91,48 @@ func Test_WhenFetchingOrganisationAccountHavingUnExistentResourceId_ThenNotFound
 	assert.NotNil(err)
 	assert.Equal("invalid status 404 expected 200", err.Error())
 }
+
+// Test_WhenDeletingOrganisationAccountHavingExistentIdAfterCreation_ThenResultIsNoContentWithSuccess core account delete
+// success test:
+func Test_WhenDeletingOrganisationAccountHavingExistentIdAfterCreation_ThenResultIsNoContentWithSuccess(
+	t *testing.T) {
+	t.Parallel()
+	assert := assert.New(t)
+	ah := NewAccountHandler()
+	id := uuid.New().String()
+	n := "Milagros Aguerre"
+	req, _ := mockBasicAccountData(id, n)
+	assert.NotNil(req)
+	resp, _ := ah.Create(*req)
+	assert.NotNil(resp)
+	assert.NotNil(resp.Version)
+	err := ah.Delete(resp.ID, *resp.Version)
+	assert.Nil(err)
+}
+
+func Test_WhenDeletingOrganisationAccountHavingUnExistentResourceId_ThenNotFoundErrorOccurs(
+	t *testing.T) {
+	t.Parallel()
+	assert := assert.New(t)
+	ah := NewAccountHandler()
+	err := ah.Delete("ad07e007-0007-0b7b-a0e7-0070ea0cc7da", 0)
+	assert.NotNil(err)
+	assert.Equal("invalid status 404 expected 204", err.Error())
+}
+
+func Test_WhenDeletingOrganisationAccountHavingExistentIdWithInvalidVersionAfterCreation_ThenConflictErrorOccurs(
+	t *testing.T) {
+	t.Parallel()
+	assert := assert.New(t)
+	ah := NewAccountHandler()
+	id := uuid.New().String()
+	n := "Sol Aguerre"
+	req, _ := mockBasicAccountData(id, n)
+	assert.NotNil(req)
+	resp, _ := ah.Create(*req)
+	assert.NotNil(resp)
+	assert.NotNil(resp.Version)
+	err := ah.Delete(resp.ID, *resp.Version+1)
+	assert.NotNil(err)
+	assert.Equal("invalid status 409 expected 204", err.Error())
+}
