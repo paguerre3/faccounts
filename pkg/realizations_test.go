@@ -6,16 +6,6 @@ import (
 	"testing"
 )
 
-var (
-	c  chan string
-	vs []int64
-)
-
-func init() {
-	c = make(chan string)
-	vs = make([]int64, 0)
-}
-
 // Test_WhenCreateOrganisationAccountWithValidAttributes_ThenResultIsEnrichedWithSuccess core account creation
 // success test:
 func Test_WhenCreateOrganisationAccountWithValidAttributes_ThenResultIsEnrichedWithSuccess(t *testing.T) {
@@ -29,12 +19,10 @@ func Test_WhenCreateOrganisationAccountWithValidAttributes_ThenResultIsEnrichedW
 	resp, err := ah.Create(*req)
 	assert.Nil(err)
 	assert.NotNil(resp)
-	go addAccountCreation(id, c)
 	assert.NotNil(resp.Attributes)
 	assert.Equal(n, resp.Attributes.Name[0])
 	assert.Equal(id, resp.ID)
 	assert.NotNil(resp.Version)
-	vs = append(vs, *resp.Version)
 }
 
 func Test_WhenCreateOrganisationAccountHavingDuplicatedId_ThenViolationErrorOccurs(t *testing.T) {
@@ -48,9 +36,7 @@ func Test_WhenCreateOrganisationAccountHavingDuplicatedId_ThenViolationErrorOccu
 	resp, err := ah.Create(*req)
 	assert.Nil(err)
 	assert.NotNil(resp)
-	go addAccountCreation(id, c)
 	assert.Equal(n, resp.Attributes.Name[0])
-	vs = append(vs, *resp.Version)
 	req, err = mockBasicAccountData(id, n)
 	assert.Nil(err)
 	assert.NotNil(req)
@@ -83,7 +69,6 @@ func Test_WhenFetchingOrganisationAccountHavingExistentIdAfterCreation_ThenResul
 	req, err := mockBasicAccountData(id, n)
 	_, err = ah.Create(*req)
 	assert.Nil(err)
-	go addAccountCreation(id, c)
 	resp, err := ah.Fetch(id)
 	assert.Nil(err)
 	assert.NotNil(resp)
@@ -91,7 +76,6 @@ func Test_WhenFetchingOrganisationAccountHavingExistentIdAfterCreation_ThenResul
 	assert.Equal(n, resp.Attributes.Name[0])
 	assert.Equal(id, resp.ID)
 	assert.NotNil(resp.Version)
-	vs = append(vs, *resp.Version)
 }
 
 func Test_WhenFetchingOrganisationAccountHavingUnExistentResourceId_ThenNotFoundErrorOccurs(
@@ -140,34 +124,50 @@ func Test_WhenDeletingOrganisationAccountHavingExistentIdWithInvalidVersionAfter
 	assert.NotNil(req)
 	resp, _ := ah.Create(*req)
 	assert.NotNil(resp)
-	go addAccountCreation(id, c)
 	assert.NotNil(resp)
 	assert.NotNil(resp.Version)
-	vs = append(vs, *resp.Version)
 	err := ah.Delete(resp.ID, *resp.Version+1)
 	assert.NotNil(err)
 	assert.Equal("invalid status 409 expected 204", err.Error())
 }
 
-// Test_WhenDeletingAllPreviouslyCreatedAccounts_ThenResultIsNoContentWithSuccess clean up.
-// Uncomment for clearing accounts created during "current" tests, otherwise clear docker/container volume
-// for removing "everything".
-/*
-func Test_WhenDeletingAllPreviouslyCreatedAccounts_ThenResultIsNoContentWithSuccess(t *testing.T) {
-	time.Sleep(time.Second * 1)
-	if len(vs) > 0 {
-		ah := NewAccountHandler()
-		for _, v := range vs {
-			// <-c is a blocking wait:
-			go func(accountId string, ver int64, tt *testing.T) {
-				err := ah.Delete(accountId, ver)
-				assert.Nil(tt, err)
-			}(<-c, v, t)
-		}
+// Test_WhenDeletingPreviouslyCreatedAccountsInParallel_ThenResultIsNoContentWithSuccess create and delete in parallel.
+func Test_WhenDeletingPreviouslyCreatedAccountsInParallel_ThenResultIsNoContentWithSuccess(t *testing.T) {
+	ids := make(chan string)
+	defer close(ids)
+	laps := 77
+	ah := NewAccountHandler()
+	// no need of using wg as <-c during consumption is a blocking wait:
+	for i := 0; i <= laps; i++ {
+		// wg add delta
+		// anonymous func:
+		go func(ahh *AccountHandler, cc chan string, tt *testing.T) {
+			// wg defer done
+			cc <- addAccountCreation(ahh, tt)
+		}(&ah, ids, t)
+	}
+	// wg wait
+	for j := 0; j <= laps; j++ {
+		//  <-c is a blocking wait, i.e. the same as doing "for" over the chan:
+		go addAccountDeletion(<-ids, &ah, t)
 	}
 }
-*/
 
-func addAccountCreation(id string, c chan string) {
-	c <- id
+func addAccountCreation(h *AccountHandler, tt *testing.T) string {
+	id := uuid.New().String()
+	n := "Camila Milagros Aguerre"
+	req, _ := mockBasicAccountData(id, n)
+	resp, _ := (*h).Create(*req)
+	if resp == nil {
+		tt.Errorf("response is nil for request %v", *req)
+	}
+	return id
+}
+
+func addAccountDeletion(id string, h *AccountHandler, tt *testing.T) {
+	// recently created accounts have 0 version always:
+	err := (*h).Delete(id, 0)
+	if err != nil {
+		tt.Errorf("delete of id %s failed with error %v", id, err)
+	}
 }
