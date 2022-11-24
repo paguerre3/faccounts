@@ -4,7 +4,6 @@ import (
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"testing"
-	"time"
 )
 
 var (
@@ -150,7 +149,10 @@ func Test_WhenDeletingOrganisationAccountHavingExistentIdWithInvalidVersionAfter
 	assert.Equal("invalid status 409 expected 204", err.Error())
 }
 
-// Test_WhenDeletingAllPreviouslyCreatedAccounts_ThenResultIsNoContentWithSuccess clean up:
+// Test_WhenDeletingAllPreviouslyCreatedAccounts_ThenResultIsNoContentWithSuccess clean up.
+// Uncomment for clearing accounts created during "current" tests, otherwise clear docker/container volume
+// for removing "everything".
+/*
 func Test_WhenDeletingAllPreviouslyCreatedAccounts_ThenResultIsNoContentWithSuccess(t *testing.T) {
 	time.Sleep(time.Second * 1)
 	if len(vs) > 0 {
@@ -164,6 +166,7 @@ func Test_WhenDeletingAllPreviouslyCreatedAccounts_ThenResultIsNoContentWithSucc
 		}
 	}
 }
+*/
 
 func addAccountCreation(id string, c chan string) {
 	c <- id
