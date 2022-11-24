@@ -43,12 +43,12 @@ func (accountHandlerImpl) Fetch(id string) (*AccountData, error) {
 func (ah accountHandlerImpl) Delete(id string, version int64) error {
 	address := internal.ResolveAddress(configs.OrganizationsAccountAddress, id)
 	req, err := http.NewRequest("DELETE", address, nil)
-	q := req.URL.Query()
-	q.Add("version", strconv.FormatInt(version, 10))
-	req.URL.RawQuery = q.Encode()
 	if err != nil {
 		return err
 	}
+	q := req.URL.Query()
+	q.Add("version", strconv.FormatInt(version, 10))
+	req.URL.RawQuery = q.Encode()
 	httpResp, err := ah.client.Do(req)
 	if httpResp != nil {
 		defer httpResp.Body.Close()
