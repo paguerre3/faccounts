@@ -18,13 +18,13 @@ docker-compose down --volumes
 
 ### architecture
 #### package view
-![Screenshot](https://github.com/paguerre3/tpricing/blob/main/design/pckge-diagram.png?raw=true)
+![Screenshot](https://github.com/paguerre3/faccounts/blob/main/assets/pkg-diagram.png?raw=true)
 
 #### sequence view
-![Screenshot](https://github.com/paguerre3/tpricing/blob/main/design/seq-diagram.png?raw=true)
+![Screenshot](https://github.com/paguerre3/faccounts/blob/main/assets/seq-diagram.png?raw=true)
 
 #### technology stack
-![Screenshot](https://github.com/paguerre3/tpricing/blob/main/design/impl-img.png?raw=true)
+![Screenshot](https://github.com/paguerre3/faccounts/blob/main/assets/stack.png?raw=true)
 
 
 
