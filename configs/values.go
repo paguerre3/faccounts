@@ -8,7 +8,6 @@ import (
 const (
 	defaultHostAddress            = "http://localhost:8080"
 	organisationsAccountsResource = "v1/organisation/accounts"
-	ApplicationJson               = "application/json"
 	HttpMaxRetries                = 3
 )
 

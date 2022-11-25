@@ -21,7 +21,7 @@ func NewAccountHandler() AccountHandler {
 	}
 }
 
-func (accountHandlerImpl) Create(req AccountData) (resp *AccountData, err error) {
+func (ah accountHandlerImpl) Create(req AccountData) (resp *AccountData, err error) {
 	r := request[AccountData]{
 		Data: req,
 	}
@@ -30,37 +30,21 @@ func (accountHandlerImpl) Create(req AccountData) (resp *AccountData, err error)
 		return nil, err
 	}
 	br := bytes.NewBuffer(bs)
-	// add retry strategy for waiting until account api is healthy:
-	retry := configs.HttpMaxRetries
-	var httpResp *http.Response
-	for retry > 0 {
-		httpResp, err = http.Post(configs.OrganizationsAccountAddress,
-			configs.ApplicationJson, br)
-		if err != nil {
-			retry--
-			time.Sleep(time.Second * 1)
-		} else {
-			break
-		}
+	httpReq, err := http.NewRequest("POST", configs.OrganizationsAccountAddress, br)
+	if err != nil {
+		return nil, err
 	}
+	httpResp, err := ah.doWithRetry(httpReq)
 	return processResponse(httpResp, err, http.StatusCreated)
 }
 
-func (accountHandlerImpl) Fetch(id string) (*AccountData, error) {
+func (ah accountHandlerImpl) Fetch(id string) (*AccountData, error) {
 	address := internal.ResolveAddress(configs.OrganizationsAccountAddress, id)
-	retry := configs.HttpMaxRetries
-	var httpResp *http.Response
-	var err error
-	// add retry strategy for waiting until account api is healthy:
-	for retry > 0 {
-		httpResp, err = http.Get(address)
-		if err != nil {
-			retry--
-			time.Sleep(time.Second * 1)
-		} else {
-			break
-		}
+	req, err := http.NewRequest("GET", address, nil)
+	if err != nil {
+		return nil, err
 	}
+	httpResp, err := ah.doWithRetry(req)
 	return processResponse(httpResp, err, http.StatusOK)
 }
 
@@ -73,11 +57,19 @@ func (ah accountHandlerImpl) Delete(id string, version int64) error {
 	q := req.URL.Query()
 	q.Add("version", strconv.FormatInt(version, 10))
 	req.URL.RawQuery = q.Encode()
-	// add retry strategy for waiting until account api is healthy:
+	httpResp, err := ah.doWithRetry(req)
+	if httpResp != nil {
+		defer httpResp.Body.Close()
+	}
+	return checkStatusError(httpResp, err, http.StatusNoContent)
+}
+
+// doWithRetry implement simple retry policy for waiting until account api is healthy when docker composition starts
+// even having dependsOn enabled.
+func (ah accountHandlerImpl) doWithRetry(req *http.Request) (resp *http.Response, err error) {
 	retry := configs.HttpMaxRetries
-	var httpResp *http.Response
 	for retry > 0 {
-		httpResp, err = ah.client.Do(req)
+		resp, err = ah.client.Do(req)
 		if err != nil {
 			retry--
 			time.Sleep(time.Second * 1)
@@ -85,10 +77,7 @@ func (ah accountHandlerImpl) Delete(id string, version int64) error {
 			break
 		}
 	}
-	if httpResp != nil {
-		defer httpResp.Body.Close()
-	}
-	return checkStatusError(httpResp, err, http.StatusNoContent)
+	return resp, err
 }
 
 func processResponse(httpResp *http.Response, httpErr error, expectedStatus int) (
