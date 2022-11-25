@@ -6,9 +6,9 @@ import (
 	"testing"
 )
 
-// Test_WhenCreateOrganisationAccountWithValidAttributes_ThenResultIsEnrichedWithSuccess core account creation
+// Test_WhenCreatingOrganisationAccountHavingValidAttributes_ThenResultIsEnrichedWithSuccess core account creation
 // success test:
-func Test_WhenCreateOrganisationAccountWithValidAttributes_ThenResultIsEnrichedWithSuccess(t *testing.T) {
+func Test_WhenCreatingOrganisationAccountHavingValidAttributes_ThenResultIsEnrichedWithSuccess(t *testing.T) {
 	assert := assert.New(t)
 	ah := NewAccountHandler()
 	id := uuid.New().String()
@@ -25,7 +25,7 @@ func Test_WhenCreateOrganisationAccountWithValidAttributes_ThenResultIsEnrichedW
 	assert.NotNil(resp.Version)
 }
 
-func Test_WhenCreateOrganisationAccountHavingDuplicatedId_ThenViolationErrorOccurs(t *testing.T) {
+func Test_WhenCreatingOrganisationAccountHavingDuplicatedId_ThenViolationErrorOccurs(t *testing.T) {
 	assert := assert.New(t)
 	ah := NewAccountHandler()
 	id := uuid.New().String()
@@ -45,7 +45,7 @@ func Test_WhenCreateOrganisationAccountHavingDuplicatedId_ThenViolationErrorOccu
 	assert.Equal("invalid status 409 expected 201", err.Error())
 }
 
-func Test_WhenCreateOrganisationAccountInvalidDataOrMissing_ThenBadRequestErrorOccurs(t *testing.T) {
+func Test_WhenCreatingOrganisationAccountHavingInvalidDataOrMissing_ThenBadRequestErrorOccurs(t *testing.T) {
 	assert := assert.New(t)
 	ah := NewAccountHandler()
 	id := ""

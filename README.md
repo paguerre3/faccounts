@@ -4,7 +4,11 @@ f3 accounts challenge
 
 
 ### run challenge
-build test image and execute tests based on docker compose dependencies defined
+<pre>
+docker-compose up --abort-on-container-exit
+</pre>
+
+alternative: rebuild test image everytime and execute tests based on docker compose dependencies defined
 <pre>
 docker-compose up --build --abort-on-container-exit
 </pre>
