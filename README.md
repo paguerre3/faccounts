@@ -22,6 +22,13 @@ docker-compose down --volumes
 
 #### sequence view
 ![Screenshot](https://github.com/paguerre3/faccounts/blob/main/assets/seq-diagram.png?raw=true)
+---
+**NOTE**
+
+- The client lib implements a retry policy for making calls to the account api.
+- Also, status codes unexpected are wrapped as error by the client lib. 
+
+---
 
 #### technology stack
 ![Screenshot](https://github.com/paguerre3/faccounts/blob/main/assets/stack.png?raw=true)
