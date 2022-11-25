@@ -4,11 +4,12 @@ f3 accounts challenge
 
 
 ### run challenge
+execute <code>accounts_lib_tests</code> (of client lib) based on docker compose defined dependencies
 <pre>
 docker-compose up --abort-on-container-exit
 </pre>
 
-alternative: rebuild test image everytime and execute tests based on docker compose dependencies defined
+alternative: rebuild test image everytime
 <pre>
 docker-compose up --build --abort-on-container-exit
 </pre>
