@@ -131,8 +131,8 @@ func Test_WhenDeletingOrganisationAccountHavingExistentIdWithInvalidVersionAfter
 	assert.Equal("invalid status 409 expected 204", err.Error())
 }
 
-// Test_WhenDeletingPreviouslyCreatedAccountsInParallel_ThenResultIsNoContentWithSuccess create and delete in parallel.
-func Test_WhenDeletingPreviouslyCreatedAccountsInParallel_ThenResultIsNoContentWithSuccess(t *testing.T) {
+// Test_WhenDeletingCreatedAccountsInParallel_ThenResultIsNoContentWithSuccess create and delete in parallel.
+func Test_WhenDeletingCreatedAccountsInParallel_ThenResultIsNoContentWithSuccess(t *testing.T) {
 	ids := make(chan string)
 	defer close(ids)
 	laps := 77

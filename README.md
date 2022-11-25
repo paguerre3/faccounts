@@ -12,3 +12,13 @@ clean up resources stored in volumes
 docker-compose down --volumes
 </pre>
 
+### troubleshoot commands
+list network
+<pre>
+docker network ls  
+</pre>
+inspect default network created
+<pre>
+docker network inspect faccounts_default
+</pre>
+

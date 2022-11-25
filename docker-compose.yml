@@ -34,12 +34,12 @@ services:
       - POSTGRES_PASSWORD=password
     volumes:
       - ./scripts/db:/docker-entrypoint-initdb.d/
+
   vault:
     image: vault:1.6.3
     environment:
       - SKIP_SETCAP=1
       - VAULT_DEV_ROOT_TOKEN_ID=8fb95528-57c6-422e-9722-d2147bcba8ed
-
 
   accounts_lib_tests:
     build:
@@ -47,5 +47,6 @@ services:
       dockerfile: Dockerfile
     depends_on:
       - accountapi
-
+    environment:
+      - ORG_ACCOUNT_ADDR=http://faccounts_accountapi_1:8080/v1/organisation/accounts
 

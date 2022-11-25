@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+	"time"
 )
 
 type accountHandlerImpl struct {
@@ -29,14 +30,37 @@ func (accountHandlerImpl) Create(req AccountData) (resp *AccountData, err error)
 		return nil, err
 	}
 	br := bytes.NewBuffer(bs)
-	httpResp, err := http.Post(configs.OrganizationsAccountAddress,
-		configs.ApplicationJson, br)
+	// add retry strategy for waiting until account api is healthy:
+	retry := configs.HttpMaxRetries
+	var httpResp *http.Response
+	for retry > 0 {
+		httpResp, err = http.Post(configs.OrganizationsAccountAddress,
+			configs.ApplicationJson, br)
+		if err != nil {
+			retry--
+			time.Sleep(time.Second * 1)
+		} else {
+			break
+		}
+	}
 	return processResponse(httpResp, err, http.StatusCreated)
 }
 
 func (accountHandlerImpl) Fetch(id string) (*AccountData, error) {
 	address := internal.ResolveAddress(configs.OrganizationsAccountAddress, id)
-	httpResp, err := http.Get(address)
+	retry := configs.HttpMaxRetries
+	var httpResp *http.Response
+	var err error
+	// add retry strategy for waiting until account api is healthy:
+	for retry > 0 {
+		httpResp, err = http.Get(address)
+		if err != nil {
+			retry--
+			time.Sleep(time.Second * 1)
+		} else {
+			break
+		}
+	}
 	return processResponse(httpResp, err, http.StatusOK)
 }
 
@@ -49,7 +73,18 @@ func (ah accountHandlerImpl) Delete(id string, version int64) error {
 	q := req.URL.Query()
 	q.Add("version", strconv.FormatInt(version, 10))
 	req.URL.RawQuery = q.Encode()
-	httpResp, err := ah.client.Do(req)
+	// add retry strategy for waiting until account api is healthy:
+	retry := configs.HttpMaxRetries
+	var httpResp *http.Response
+	for retry > 0 {
+		httpResp, err = ah.client.Do(req)
+		if err != nil {
+			retry--
+			time.Sleep(time.Second * 1)
+		} else {
+			break
+		}
+	}
 	if httpResp != nil {
 		defer httpResp.Body.Close()
 	}
