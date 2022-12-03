@@ -10,8 +10,3 @@ before_install:
   - sudo mv docker-compose /usr/local/bin
   - sed -i -e 's/golang/golang:'"$TRAVIS_GO_VERSION"'/' docker-compose.yml
 script: make test-build
-deploy:
-  provider: script
-  script: make release
-  on:
-    branch: master
