@@ -1,4 +1,7 @@
+language: go
 sudo: required
+go:
+  - 1.19
 
 services:
   - docker
@@ -10,5 +13,7 @@ before_install:
   - sudo apt-get -y -o Dpkg::Options::="--force-confnew" install docker-ce
   - docker --version
   - docker-compose --version
+  - echo "$DOCKER_PASSWORD"
+  - echo "$DOCKER_USERNAME"
 
 script: make test-build
