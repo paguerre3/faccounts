@@ -13,13 +13,13 @@ before_install:
   - sudo apt-get -y -o Dpkg::Options::="--force-confnew" install docker-ce
   - docker --version
   - docker-compose --version
-  - echo "$DOCKER_PASSWORD"
-  - echo "$DOCKER_USERNAME"
 
 script: make test-build
 
 deploy:
   provider: script
-  script: make release
+  script:
+    - bash dockerhub_login
+    - make release
   on:
     branch: feature/ci-cd
