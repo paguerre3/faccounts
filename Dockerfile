@@ -9,6 +9,8 @@ COPY internal/ internal/
 COPY pkg/ pkg/
 COPY go.mod go.mod
 
+# https://es.wikipedia.org/wiki/Uname
+# https://stackoverflow.com/questions/28031603/what-do-three-dots-mean-in-go-command-line-invocations
 RUN go mod tidy && \
     go build ./... && \
     go install ./...

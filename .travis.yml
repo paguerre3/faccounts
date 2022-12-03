@@ -1,0 +1,17 @@
+language: go
+sudo: required
+go:
+  - 1.19
+services:
+  - docker
+before_install:
+  - curl -L https://github.com/docker/compose/releases/download/v2.13.0/docker-compose-`uname -s`-`uname -m` > docker-compose
+  - chmod +x docker-compose
+  - sudo mv docker-compose /usr/local/bin
+  - sed -i -e 's/golang/golang:'"$TRAVIS_GO_VERSION"'/' docker-compose.yml
+script: make test-build
+deploy:
+  provider: script
+  script: make release
+  on:
+    branch: master
