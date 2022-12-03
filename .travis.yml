@@ -17,3 +17,9 @@ before_install:
   - echo "$DOCKER_USERNAME"
 
 script: make test-build
+
+deploy:
+  provider: script
+  script: make release
+  on:
+    branch: feature/ci-cd
