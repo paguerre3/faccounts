@@ -1,4 +1,5 @@
-# faccounts
+# faccounts [![Build Status](https://travis-ci.com/paguerre3/faccounts.svg?token=vSTu1zSW1ehqZeuodHpi&branch=feature/ci-cd)](https://travis-ci.com/paguerre3/faccounts)
+
 f3 accounts challenge
 
 
