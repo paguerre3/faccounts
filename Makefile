@@ -1,8 +1,7 @@
-IMAGE=paguerre/faccounts
-DCR=docker-compose up --build --abort-on-container-exit
-docker-compose-up:
-	$(DCR) -t $(IMAGE)
+DCU=docker-compose up --build --abort-on-container-exit
+docker-up:
+	$(DCU)
 docker-push:
-	docker push $(IMAGE)
-test-build: docker-compose-up
-release: docker-compose-up docker-push
+	docker-compose push
+test-build: docker-up
+release: docker-up docker-push
