@@ -1,20 +1,13 @@
-language: go
 sudo: required
-go:
-  - 1.19
 
 services:
   - docker
 
-env:
-  global:
-    - DOCKER_COMPOSE_VERSION=3.0
-
 before_install:
-  - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
-  - chmod +x docker-compose
-  - sudo mv docker-compose /usr/local/bin
-  - sed -i -e 's/golang/golang:'"$TRAVIS_GO_VERSION"'/' docker-compose.yml
+  - curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+  - sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+  - sudo apt-get update
+  - sudo apt-get -y -o Dpkg::Options::="--force-confnew" install docker-ce
   - docker --version
   - docker-compose --version
 
