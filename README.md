@@ -1,4 +1,5 @@
-# faccounts
+# faccounts [![Build Status](https://travis-ci.com/paguerre3/faccounts.svg?token=vSTu1zSW1ehqZeuodHpi&branch=feature/ci-cd)](https://travis-ci.com/paguerre3/faccounts)
+
 f3 accounts challenge
 
 
@@ -58,9 +59,7 @@ nice to have in case of a production code:
 - logging capability, e.g. exposed in kibana
 - metrics capability, e.g. exposed in new-relic and/or grafana/datadog
 - enable sh entry, i.e. for debugging inside container client lib
-- refine Dockerfile code, e.g. for <code>COPY</code> in order to reduce the layers for <code>cp</code> of go files into the container and/or using a minimal docker image for go like alpine 
-- enable CD/CI builds and code coverage, e.g. using travis.yml and coveralls.io
-- static analysis during CD/CI builds and security checks
+- refine Dockerfile code, e.g. for <code>COPY</code> in order to reduce the layers for <code>cp</code> of go files into the container and/or using a minimal docker image for go like alpine
 
 
 
