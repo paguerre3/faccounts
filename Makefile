@@ -1,4 +1,3 @@
 DCU=docker-compose up --build --abort-on-container-exit
-docker-up:
+test-build:
 	$(DCU)
-test-build: docker-up

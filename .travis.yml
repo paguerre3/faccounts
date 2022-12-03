@@ -20,4 +20,5 @@ deploy:
   provider: script
   script: bash docker_release
   on:
-    branch: feature/ci-cd
+    all_branches: true
+    condition: ${TRAVIS_PULL_REQUEST_BRANCH:-$TRAVIS_BRANCH} =~ ^release\/.*$
